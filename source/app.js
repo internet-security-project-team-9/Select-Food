@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { createRoot } from 'react-dom/client';
+//import axios from "axios";
 
 const root = createRoot(document.getElementById("root"));
 
@@ -35,6 +36,14 @@ class Clock extends React.Component {
 }
 
 function App() {
+    /* useEffect(
+        () => {
+        axios.get('/api')
+        .then((res)=>{Callback(res.data)})
+        .catch((err)=>{console.log(err)})
+        },[]
+    );*/
+    
     return (
         <div>
             <Clock />
