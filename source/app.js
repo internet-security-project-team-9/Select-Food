@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { createRoot } from 'react-dom/client';
-//import axios from "axios";
 
 const root = createRoot(document.getElementById("root"));
 
@@ -35,22 +34,98 @@ class Clock extends React.Component {
     }
 }
 
-function App() {
-    /* useEffect(
-        () => {
-        axios.get('/api')
-        .then((res)=>{Callback(res.data)})
-        .catch((err)=>{console.log(err)})
-        },[]
-    );*/
-    
-    return (
-        <div>
-            <Clock />
-            <Clock />
-            <Clock />
-        </div>
-    );
+class Toggle extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {isToggleOn: true};
+    }
+  
+    handleClick = () => {
+      this.setState(prevState => ({
+        isToggleOn: !prevState.isToggleOn
+      }));
+    }
+  
+    render() {
+      return (
+        <button onClick={this.handleClick}>
+          {this.state.isToggleOn ? 'ON' : 'OFF'}
+        </button>
+      );
+    }
+}
+
+class UserStatus extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    submit = () => {
+
+    }
+
+    render() {
+        return (
+            <>
+                <div className="horizontal">
+                    <div>
+                        <h3>질병여부</h3>
+                        <select id="disease">
+                            <option value="0">없음</option>
+                        </select>
+                    </div>
+                    <div>
+                        <h3>알러지 여부</h3>
+                        <select id="allergy">
+                            <option value="0">없음</option>
+                        </select>
+                    </div>
+                    <div>
+                        <h3>비건이신가요?</h3>
+                        <select id="allergy">
+                            <option value="0">아니오</option>
+                            <option value="1">예</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <button onClick={this.submit}>추천받기</button>
+                </div>
+            </>
+        )
+    }
+}
+
+class CardsContainer extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <div>
+            </div>
+        )
+    }
+}
+
+class App extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    componentDidMount() {
+    }
+
+    componentWillUnmount() {
+    }
+
+    render() {
+        return (<>
+            <UserStatus />
+            <CardsContainer />
+        </>)
+    }
 }
 
 root.render(<App />);
