@@ -67,29 +67,35 @@ class UserStatus extends React.Component {
     render() {
         return (
             <>
-                <div className="horizontal">
-                    <div>
-                        <h3>질병여부</h3>
-                        <select id="disease">
-                            <option value="0">없음</option>
-                        </select>
-                    </div>
-                    <div>
-                        <h3>알러지 여부</h3>
-                        <select id="allergy">
-                            <option value="0">없음</option>
-                        </select>
-                    </div>
-                    <div>
-                        <h3>비건이신가요?</h3>
-                        <select id="allergy">
-                            <option value="0">아니오</option>
-                            <option value="1">예</option>
-                        </select>
-                    </div>
+                <div className="row row-cols-auto">
+                        <div className="col">
+                            <h3>질병여부</h3>
+                            <select id="disease">
+                                <option value="0">없음</option>
+                            </select>
+                        </div>
+                        <div className="col">
+                            <h3>알러지 여부</h3>
+                            <select id="allergy">
+                                <option value="0">없음</option>
+                            </select>
+                        </div>
+                        <div className="col">
+                            <h3>종교 여부</h3>
+                            <select id="religion">
+                                <option value="0">없음</option>
+                            </select>
+                        </div>
+                        <div className="col">
+                            <h3>비건이신가요?</h3>
+                            <select id="allergy">
+                                <option value="0">아니오</option>
+                                <option value="1">예</option>
+                            </select>
+                        </div>
                 </div>
-                <div>
-                    <button onClick={this.submit}>추천받기</button>
+                <div className="row">
+                    <button className="button" onClick={this.submit}>추천받기</button>
                 </div>
             </>
         )
