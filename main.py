@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 app = FastAPI()
 
-@app.get("/api/test")
+@app.get("/api/getDiseaseOptions")
 async def root():
     return {"message": "test"}
 

@@ -2,136 +2,65 @@ import React, { useCallback, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { createRoot } from 'react-dom/client';
 
-const root = createRoot(document.getElementById("root"));
+const userDisease = createRoot(document.getElementById("userDisease"));
+const userAllergy = createRoot(document.getElementById("userAllergy"));
+const userReligion = createRoot(document.getElementById("userReligion"));
+const myButton = createRoot(document.getElementById("myButton"));
 
-class Clock extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {date: new Date()};
-    }
-
-    componentDidMount() {
-        this.timerID = setInterval( () => this.tick(), 1000);
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.timerID);
-    }
-
-    tick() {
-        this.setState({
-            date: new Date()
-        });
-    }
-
-    render() {
-        return (
-            <div>
-                <h1>Hello, world!</h1>
-                <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
-            </div>
-        );
-    }
+function AddDiseaseOptions() {
+    return <>
+        <option>없음</option>
+        <option>당뇨</option>
+        <option>비만</option>
+        <option>셀리악(Celiac)</option>
+        <option>유당불내증</option>
+        <option>고혈압</option>
+        <option>신장 질환</option>
+        <option>통풍</option>
+        <option>심장 질환</option>
+    </>;
 }
 
-class Toggle extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {isToggleOn: true};
-    }
-  
-    handleClick = () => {
-      this.setState(prevState => ({
-        isToggleOn: !prevState.isToggleOn
-      }));
-    }
-  
-    render() {
-      return (
-        <button onClick={this.handleClick}>
-          {this.state.isToggleOn ? 'ON' : 'OFF'}
-        </button>
-      );
-    }
+function AddAllergyOptions() {
+    return <>
+        <option>없음</option>
+        <option>알류</option>
+        <option>참깨</option>
+        <option>우유</option>
+        <option>콩(대두)</option>
+        <option>땅콩</option>
+        <option>과일 및 채소</option>
+        <option>견과류</option>
+        <option>해산물 및 조개류</option>
+        <option>밀</option>
+    </>;
 }
 
-class UserStatus extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    submit = () => {
-
-    }
-
-    render() {
-        return (
-            <>
-                <div className="row row-cols-auto">
-                        <div className="col">
-                            <h3>질병여부</h3>
-                            <select id="disease">
-                                <option value="0">없음</option>
-                            </select>
-                        </div>
-                        <div className="col">
-                            <h3>알러지 여부</h3>
-                            <select id="allergy">
-                                <option value="0">없음</option>
-                            </select>
-                        </div>
-                        <div className="col">
-                            <h3>종교 여부</h3>
-                            <select id="religion">
-                                <option value="0">없음</option>
-                            </select>
-                        </div>
-                        <div className="col">
-                            <h3>비건이신가요?</h3>
-                            <select id="allergy">
-                                <option value="0">아니오</option>
-                                <option value="1">예</option>
-                            </select>
-                        </div>
-                </div>
-                <div className="row">
-                    <button className="button" onClick={this.submit}>추천받기</button>
-                </div>
-            </>
-        )
-    }
+function AddReligionOptions() {
+    return <>
+        <option>없음</option>
+        <option>이슬람교</option>
+        <option>유대교</option>
+        <option>불교</option>
+        <option>제칠일안식일예수재림교</option>
+        <option>시크교</option>
+    </>;
 }
 
-class CardsContainer extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return (
-            <div>
-            </div>
-        )
-    }
+function Geolocation_Callback(position) {
+    window.alert(position.coords.latitude + ' ' + position.coords.longitude);
 }
 
-class App extends React.Component {
-    constructor(props) {
-        super(props);
+function MyButton() {
+    const handleOnClick = (e) => {
+        e.preventDefault();
+        navigator.geolocation.getCurrentPosition(Geolocation_Callback);
     }
 
-    componentDidMount() {
-    }
-
-    componentWillUnmount() {
-    }
-
-    render() {
-        return (<>
-            <UserStatus />
-            <CardsContainer />
-        </>)
-    }
+    return <button className="btn btn-primary" onClick={handleOnClick}>추천받기</button>;
 }
 
-root.render(<App />);
+userDisease.render(<AddDiseaseOptions />);
+userAllergy.render(<AddAllergyOptions />);
+userReligion.render(<AddReligionOptions />);
+myButton.render(<MyButton />);

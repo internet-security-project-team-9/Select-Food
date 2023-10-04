@@ -4,11 +4,41 @@
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie-edge, chrome=1" />
     <title>Select-Food</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   </head>
-  <body>
-    <div id="root" class="container">
-    </div>
+  <body class="container">
+    <form id="userData">
+      <div class="row">
+        <div class="col">
+            <h3>질병여부</h3>
+            <select id="userDisease">
+                <option value="0">없음</option>
+            </select>
+        </div>
+        <div class="col">
+            <h3>알러지 여부</h3>
+            <select id="userAllergy">
+                <option value="0">없음</option>
+            </select>
+        </div>
+        <div class="col">
+            <h3>종교 여부</h3>
+            <select id="userReligion">
+                <option value="0">없음</option>
+            </select>
+        </div>
+        <div class="col">
+            <h3>비건이신가요?</h3>
+            <select id="userVegan">
+              <option>아니오</option>
+              <option>예</option>
+            </select>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col" id="myButton"></div>
+      </div>
+    </form>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="./js/main.js"></script>
