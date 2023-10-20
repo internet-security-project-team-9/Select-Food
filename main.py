@@ -8,57 +8,77 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
-OPTIONS = Options()
-OPTIONS.add_argument('--headless')
-OPTIONS.add_argument('--window-size=1920x1080')
-OPTIONS.add_argument("--disable-gpu")
-OPTIONS.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
-SERVICE = Service(executable_path="/usr/bin/chromedriver")
-DRIVER = webdriver.Chrome(service=SERVICE, options=OPTIONS)
+URL = "https://map.naver.com/v5/search/"
+CHROMEDRIVERPATH = "/usr/bin/chromedriver"
 
-URL = 'https://map.naver.com/v5/search/'
+def initSelenium(executable_path):
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--window-size=1920x1080')
+    options.add_argument("--disable-gpu")
+    options.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
+    service = Service(executable_path=executable_path)
+    return webdriver.Chrome(service=service, options=options)
 
-KEY_WORD = '스시'
+def gotoNaverPlace_entryIframe(driver):
+    driver.implicitly_wait(10)
+    try:
+        driver.switch_to.frame(driver.find_element(By.XPATH, '//*[@id="entryIframe"]'))
+    except NoSuchElementException:
+        driver.switch_to.frame(driver.find_element(By.XPATH, '//*[@id="searchIframe"]'))
 
-DRIVER.get(URL + KEY_WORD)
+        driver.find_element(By.CSS_SELECTOR, "#_pcmap_list_scroll_container > ul > li:nth-child(1)").click()
+        driver.find_element(By.TAG_NAME, "a").click()
 
-DRIVER.implicitly_wait(10)
-try:
-    DRIVER.switch_to.frame(DRIVER.find_element(By.XPATH, '//*[@id="entryIframe"]'))
-except NoSuchElementException:
-    DRIVER.switch_to.frame(DRIVER.find_element(By.XPATH, '//*[@id="searchIframe"]'))
+        driver.switch_to.default_content()
+        driver.switch_to.frame(driver.find_element(By.XPATH, '//*[@id="entryIframe"]'))
 
-    DRIVER.find_element(By.CSS_SELECTOR, "#_pcmap_list_scroll_container > ul > li:nth-child(1)").click()
-    DRIVER.find_element(By.TAG_NAME, "a").click()
+def switchToMenuTabInNaverPlace(driver):
+    tabs = driver.find_elements(By.CSS_SELECTOR, 'div.place_fixed_maintab > div > div > div > div > a')
 
-    DRIVER.switch_to.default_content()
-    DRIVER.switch_to.frame(DRIVER.find_element(By.XPATH, '//*[@id="entryIframe"]'))
+    for tab in tabs:
+        cursor = tab.find_element(By.TAG_NAME, 'span').get_attribute("innerHTML")
 
-# with open("/home/teamuser/searchResult.txt", 'w') as f:
-#     f.write(BeautifulSoup(DRIVER.page_source, "html.parser").prettify())
+        if (cursor != "메뉴"): continue
+        tab.click()
+        return
 
-#TABS = DRIVER.find_elements(By.XPATH, '//*[@id="app-root"]/div/div/div/div[5]/div/div/div/div/a')
-TABS = DRIVER.find_elements(By.CSS_SELECTOR, 'div.place_fixed_maintab > div > div > div > div > a')
+def getMenusOnNaverOrder(driver):
+    preProcessMenus = driver.find_elements(By.CLASS_NAME, "tit")
 
-for tab in TABS:
-    cursor = tab.find_element(By.TAG_NAME, 'span').get_attribute("innerHTML")
-    if (cursor == "메뉴"):
-          tab.click()
-          break
+    menuText = list()
 
-#ELEMENTSET = DRIVER.find_element(By.XPATH, '//*[@id="app-root"]/div/div/div/div[6]/div[2]/div[1]/div/ul')
+    for item in preProcessMenus:
+        menuText.append(item.get_attribute("innerHTML"))
 
-#여기에서 메뉴가 주문 창으로 넘어가면 빧어버림
-ELEMENTSET = DRIVER.find_element(By.CSS_SELECTOR, '.place_section_content').find_elements(By.TAG_NAME, "li")
+    return menuText
 
-# print(BeautifulSoup(DRIVER.find_element(By.CSS_SELECTOR, '.place_section_content').get_attribute("innerHTML"), "html.parser").prettify())
+def getMenusOnNaverPlace(driver):
+    preProcessMenus = driver.find_element(By.CSS_SELECTOR, '.place_section_content').find_elements(By.TAG_NAME, "span")
 
-# for element in ELEMENTSET:
-#     print(BeautifulSoup(element.find_element(By.TAG_NAME, "a").get_attribute("innerHTML"), "html.parser").prettify())
+    menuText = list()
 
-# input()
+    for item in preProcessMenus:
+        menuText.append(item.get_attribute("innerHTML"))
 
-ELEMENTS = DRIVER.find_element(By.CSS_SELECTOR, '.place_section_content').find_elements(By.TAG_NAME, "span")
+    return menuText
 
-for values in ELEMENTS:
-        print(BeautifulSoup(values.get_attribute("innerHTML"), "html.parser").prettify())
+def getMenusByName(name):
+    driver = initSelenium(CHROMEDRIVERPATH)
+
+    driver.get(URL + name)
+
+    gotoNaverPlace_entryIframe(driver)
+    switchToMenuTabInNaverPlace(driver)
+        
+    title = driver.find_element(By.XPATH, "/html/head/title")
+    if title.get_attribute("innerHTML") != "네이버 플레이스":
+        return getMenusOnNaverOrder(driver)
+    else:
+        return getMenusOnNaverPlace(driver)
+
+if __name__ == '__main__':
+    i = 0
+    for menu in getMenusByName("봉구스밥버거"):
+        print('<?' + str(i) + '?>' + menu)
+        i+=1
