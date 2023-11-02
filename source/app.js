@@ -107,7 +107,7 @@ function CreateUserDataForm() {
 
     const AGetGeolocation = async () => {
         var position = await getCurrentPositionPromise();
-        window.alert(position.coords.latitude + ' ' + position.coords.longitude);
+        //window.alert(position.coords.latitude + ' ' + position.coords.longitude);
         document.getElementById("FoodCards").innerHTML=position.coords.latitude + ', ' + position.coords.longitude;
         return {latitude: position.coords.latitude, longitude: position.coords.longitude};
     }
@@ -115,23 +115,43 @@ function CreateUserDataForm() {
     const HandleSubmit = async (e) => {
         e.preventDefault();
         var location = await AGetGeolocation();
-        SetState((State, e) => {
-            return {
+        var updatedState = {
             ...State,
-            userLocation: {...location}
-            };
-        });
-        alert(JSON.stringify(State, null, 2))
+            userLocation: location,
+        };
+
+        SetState(updatedState);
+
+        //TODO - request
+
+        fetch('/api',
+        {
+            method : "POST",
+            headers : {
+                "Content-Type" : "application/json; charset=utf-8"
+            },
+            body : JSON.stringify(updatedState)
+        })
+        .then(res => res.json())
+        .then(res => {
+            console.log(res);
+            document.getElementById("FoodCards").innerHTML=JSON.stringify(res, null, 2);
+        })
+
         return;
     }
 
-    const HandleSelect = e => {
-        SetState((State, e) => {
-            return {
+    // useEffect(() => {
+    //     alert(JSON.stringify(State, null, 2));
+    // }, [State])
+
+    const HandleSelect = async (e) => {
+        var updatedState = {
             ...State,
-            [e.target.id]: [e.target.value]
-            };
-        });
+            [e.target.id]: e.target.value
+        };
+
+        SetState(updatedState);
     }
 
     return (
