@@ -28,10 +28,15 @@ def gotoNaverPlace_entryIframe(driver: webdriver.Chrome):
         driver.switch_to.frame(driver.find_element(By.ID, "searchIframe"))
 
         try:
-            driver.find_element(By.CSS_SELECTOR, "#_pcmap_list_scroll_container > ul > li:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)").click()
+            driver.find_element(By.CSS_SELECTOR, "#_pcmap_list_scroll_container > ul > li:nth-child(1) > div:nth-child(1) > a").click()
         except NoSuchElementException:
-            return False
-        driver.find_element(By.TAG_NAME, "a").click()
+            try:
+                driver.find_element(By.CSS_SELECTOR, "#_pcmap_list_scroll_container > ul > li:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)").click()
+            except NoSuchElementException:
+                try:
+                    driver.find_element(By.CSS_SELECTOR, "#_pcmap_list_scroll_container > ul > li:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)").click()
+                except NoSuchElementException:
+                    return False
 
         driver.switch_to.default_content()
         try:
@@ -58,20 +63,24 @@ def switchToMenuTabInNaverPlace(driver):
 def getMenusOnNaverOrder(driver):
     preProcessMenus = driver.find_elements(By.CLASS_NAME, "tit")
 
-    menuText = list()
+    menuText = set()
 
     for item in preProcessMenus:
-        menuText.append(item.get_attribute("innerText"))
+        menuText.add(item.get_attribute("innerText"))
+
+    menuText.discard("대표")
 
     return menuText
 
 def getMenusOnNaverPlace(driver):
     preProcessMenus = driver.find_element(By.CSS_SELECTOR, '.place_section_content').find_elements(By.TAG_NAME, "span")
 
-    menuText = list()
+    menuText = set()
 
     for item in preProcessMenus:
-        menuText.append(item.get_attribute("innerText"))
+        menuText.add(item.get_attribute("innerText"))
+
+    menuText.discard("대표")
 
     return menuText
 
@@ -92,7 +101,7 @@ def getMenusByName(name):
         return getMenusOnNaverPlace(driver)
 
 if __name__ == '__main__':
-    i = 0
+    I = 0
     for menu in getMenusByName(input("식당 이름 입력: ")):
-        print('<?' + str(i) + '?>' + menu)
-        i+=1
+        print('<?' + str(I) + '?>' + menu)
+        I+=1

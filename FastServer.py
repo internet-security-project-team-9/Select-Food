@@ -7,7 +7,8 @@ from typing import Optional
 app = FastAPI()
 
 @app.get("/GetMenusByName")
-async def GetMenusByName(Name):
+def GetMenusByName(Name):
+    print("Incoming Request:" + Name)
     return {"Menus" : GetMenu.getMenusByName(Name)}
 
 if __name__ == '__main__':
