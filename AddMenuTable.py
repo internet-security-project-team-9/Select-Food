@@ -14,19 +14,43 @@ DB_USER = "sf-user"
 DB_PW = "A4q8EEdh3c"
 
 # DB 연결
-CONNECT = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PW, charset='utf8')
-CURSOR = CONNECT.cursor()
 
-def getMenu(Name: str):
+def getMenu(data: list):
+    connect = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PW, charset='utf8')
+    cur = connect.cursor()
+    cur.execute("USE SelectFood")
+
+    ID = data[0]
+    Name = data[1]
+
+    cur.execute("Select id From menu where id = '{0}';".format(ID))
+    preExistID = cur.fetchall()
+
+    if len(preExistID) > 0:
+        if ID == preExistID[0][0]:
+            print("Skipping '{0}', name:{1}".format(ID, Name))
+            return
+
+    Result = list()
     uri = "https://www.happytanuki.kr/GetMenusByName?Name=" + Name
+    Result = requests.get(uri).json()["Menus"]
 
-    print("\033[33m" + Name + "\033[0m" + " " + json.dumps(requests.get(uri).json(), ensure_ascii=False))
+    for item in Result:
+        SQL = "Insert ignore Into menu (id, menu) values ('{0}', '{1}');".format(ID, item)
+        cur.execute(SQL)
+        print("\033[33m" + Name + ':' + SQL + "\033[0m")
+    connect.commit()
+
+    cur.close()
+    connect.close()
+
+    #print("\033[33m" + Name + "\033[0m" + " " + json.dumps(requests.get(uri).json(), ensure_ascii=False))
 
 def listStrip(myList: list):
     ReturnValue = list()
 
     for item in myList:
-        ReturnValue.append(item[1])
+        ReturnValue.append([item[0], item[1]])
     
     return ReturnValue
 
@@ -35,14 +59,20 @@ def main():
 
     print("\033[33m" + "Getting Names.." + "\033[0m")
 
-    CURSOR.execute("USE SelectFood")
-    CURSOR.execute("Select 관리번호, 사업장명, \
+    connect = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PW, charset='utf8')
+    cur = connect.cursor()
+
+    cur.execute("USE SelectFood")
+    cur.execute("Select id, name, \
                 (6371 * ACos(Cos(Radians(latitude)) * Cos(Radians(37.2092017)) * Cos(Radians(126.9769365) - Radians(longitude)) + Sin(Radians(latitude)) * Sin(Radians(37.2092017)))) as Distance \
                     From restaurant \
                     Having Distance <= 50 \
                     Order By Distance ASC;")
 
-    RESTAURANTS = CURSOR.fetchall()
+    RESTAURANTS = cur.fetchall()
+
+    cur.close()
+    connect.close()
 
     print("\033[33m" + "Complete." + "\033[0m")
     print("\033[33m" + "Process pool executing.." + "\033[0m")
@@ -51,24 +81,6 @@ def main():
     processPool.map(getMenu, listStrip(RESTAURANTS))
     processPool.close()
     processPool.join()
-
-    # for RESTAURANT in RESTAURANTS:
-    #     getterThread = multiprocessing.Process(target=getMenu, args=(RESTAURANT[0], ))
-    #     asyncobject.append(getterThread)
-
-    # print("\033[33m" + "Complete." + "\033[0m")
-
-    # for page in range(0, len(asyncobject), 5):
-    #     print("\033[33m" + "Executing Thread( " + str(page + 5) + " / " + str(len(asyncobject)) + " )(" + str((page + 5)/len(asyncobject)*100) + "%).." + "\033[0m")
-    #     for thread in asyncobject[page:page+5]:
-    #         thread.start()
-
-    #     print("\033[33m" + "Waithing for threads to complete.." + "\033[0m")
-    #     for thread in asyncobject[page:page+5]:
-    #         thread.join()
-
-    CURSOR.close()
-    CONNECT.close()
 
 if __name__ == "__main__":
     main()

@@ -33,7 +33,7 @@ for i in CONVERTED[0]:
 
     command = \
 "INSERT IGNORE INTO restaurant \
-(관리번호, 사업장명, latitude, longitude) \
+(id, name, latitude, longitude) \
 VALUES ('{0}', '{1}', {2}, {3})"\
 .format(TABLE["관리번호"].values[j], TABLE["사업장명"].values[j], TABLE["좌표정보(x)"].values[j], TABLE["좌표정보(y)"].values[j])
     
